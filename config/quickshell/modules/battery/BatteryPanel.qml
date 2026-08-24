@@ -18,9 +18,12 @@ Item {
     property int percent: Math.round((UPower.displayDevice?.percentage ?? 0) * 100)
     property int powerProfile: 1
 
-   // opacity: parent.height > 150 ? 1 : 0
     Behavior on opacity {
-        Widgets.Anim{}
+        Widgets.Anim {
+            duration: Config.Appearance.anim.curves.expressiveEffectsDuration
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: Config.Appearance.anim.curves.expressiveEffects
+        }
     }
 
     RowLayout {
@@ -79,6 +82,8 @@ Item {
             }
         }
     }
+
+    // Active Battery Fill
     Rectangle {
         anchors.bottom: parent.bottom
         height: 70
@@ -87,10 +92,17 @@ Item {
         color: root.charging ? Config.Theme.tertiary : root.percent <= 25 ? Config.Theme.error : "#a6d189"
 
         Behavior on width {
-            Widgets.Anim {}
+            Widgets.Anim {
+                duration: Config.Appearance.anim.curves.expressiveDefaultSpatialDuration
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: Config.Appearance.anim.curves.expressiveDefaultSpatial
+            }
         }
+
         Behavior on color {
-            Widgets.ColorAnim {}
+            Widgets.ColorAnim {
+                duration: Config.Appearance.anim.curves.expressiveEffectsDuration
+            }
         }
 
         Widgets.StyledText {
@@ -115,6 +127,7 @@ Item {
         }
     }
 
+    // Empty Battery Background Bar
     Rectangle {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
@@ -122,5 +135,14 @@ Item {
         width: parent.width * (1 - root.bat) - 4
         radius: Config.Appearance.rounding.normal
         color: Config.Theme.surfaceContainerHigh
+
+        // Added width behavior so both sides resize smoothly in sync
+        Behavior on width {
+            Widgets.Anim {
+                duration: Config.Appearance.anim.curves.expressiveDefaultSpatialDuration
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: Config.Appearance.anim.curves.expressiveDefaultSpatial
+            }
+        }
     }
 }

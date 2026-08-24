@@ -47,18 +47,23 @@ PanelWindow {
         topLeftRadius: Config.Appearance.rounding.normal
 
         expand: true
+    
         Behavior on implicitHeight {
-            SpringAnimation {
-                spring: 3
-                damping: 0.3
-            }
-        }
-        Behavior on implicitWidth {
-            SpringAnimation {
-                spring: 3
-                damping: 0.3
-            }
-        }
+                    Widgets.Anim {
+                        duration: Config.Appearance.anim.curves.expressiveFastSpatialDuration
+                        easing.type: Easing.BezierSpline
+                        easing.bezierCurve:Config.Appearance.anim.curves.expressiveFastSpatial
+                    }
+                }
+
+                Behavior on implicitWidth {
+
+                    Widgets.Anim {
+                        duration: Config.Appearance.anim.curves.expressiveFastSpatialDuration
+                        easing.type: Easing.BezierSpline
+                        easing.bezierCurve:Config.Appearance.anim.curves.expressiveFastSpatial
+                    }
+                                    }
 
         HoverHandler {
             id: winHover
