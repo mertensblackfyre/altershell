@@ -1,3 +1,4 @@
+pragma ComponentBehavior: Bound
 import Quickshell
 import Quickshell.Io
 import QtQuick
@@ -82,11 +83,13 @@ PanelWindow {
         }
 
         Loader {
-                  anchors.fill: parent
-                  sourceComponent: Components.AppLauncher{}
-
-              }
-
+            anchors.fill: parent
+            sourceComponent: Component {
+                Components.AppLauncher {
+                    onCloseRequested: win.closePanel()
+                }
+            }
+        }
     }
     function closePanel() {
         win._expand = false;
@@ -103,10 +106,10 @@ PanelWindow {
 
     IpcHandler {
         target: "win"
-        function toggle(w:string, h:string){
+        function toggle(w: string, h: string) {
             if (win._visible && win._expand) {
                 win.closePanel();
-            }else{
+            } else {
                 win.openPanel(w, h);
             }
         }

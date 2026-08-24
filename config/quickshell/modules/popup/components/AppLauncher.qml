@@ -9,12 +9,14 @@ Item {
 
     property string searchText: ""
     property int selectedIndex: 0
+    signal closeRequested
 
     property var filteredApps: {
-        let apps = DesktopEntries.applications.values
-        if (searchText === "") return apps
-        const q = searchText.toLowerCase()
-        return apps.filter(a => a.name.toLowerCase().includes(q))
+        let apps = DesktopEntries.applications.values;
+        if (searchText === "")
+            return apps;
+        const q = searchText.toLowerCase();
+        return apps.filter(a => a.name.toLowerCase().includes(q));
     }
 
     onFilteredAppsChanged: selectedIndex = 0
@@ -22,9 +24,15 @@ Item {
     Keys.onUpPressed: selectedIndex = Math.max(0, selectedIndex - 1)
     Keys.onDownPressed: selectedIndex = Math.min(filteredApps.length - 1, selectedIndex + 1)
     Keys.onReturnPressed: {
-        if (filteredApps[selectedIndex])
-            filteredApps[selectedIndex].execute()
+        if (filteredApps[selectedIndex]) {
+            filteredApps[selectedIndex].execute();
+            searchInput.text = "";
+            root.closeRequested();
+        }
     }
+
+    Keys.onEscapePressed:{
+            root.closeRequested()         }
 
     Column {
         anchors.fill: parent
@@ -34,19 +42,26 @@ Item {
         // search bar
         Item {
             id: search
-            anchors { left: parent.left; right: parent.right }
+            anchors {
+                left: parent.left
+                right: parent.right
+            }
             implicitHeight: 40
 
             Rectangle {
-                anchors { fill: parent; leftMargin: 10; rightMargin: 10 }
+                anchors {
+                    fill: parent
+                    leftMargin: 10
+                    rightMargin: 10
+                }
                 height: 32
                 radius: Config.Appearance.rounding.small
                 color: Qt.rgba(1, 1, 1, 0.06)
-                border.color: searchInput.activeFocus
-                    ? Qt.rgba(Config.Theme.primary.r, Config.Theme.primary.g, Config.Theme.primary.b, 0.55)
-                    : Qt.rgba(1, 1, 1, 0.12)
+                border.color: searchInput.activeFocus ? Qt.rgba(Config.Theme.primary.r, Config.Theme.primary.g, Config.Theme.primary.b, 0.55) : Qt.rgba(1, 1, 1, 0.12)
                 border.width: 1
-                Behavior on border.color { Widgets.ColorAnim {} }
+                Behavior on border.color {
+                    Widgets.ColorAnim {}
+                }
 
                 MouseArea {
                     anchors.fill: parent
@@ -54,7 +69,11 @@ Item {
                 }
 
                 Widgets.StyledText {
-                    anchors { left: parent.left; leftMargin: Config.Appearance.spacing.small; verticalCenter: parent.verticalCenter }
+                    anchors {
+                        left: parent.left
+                        leftMargin: Config.Appearance.spacing.small
+                        verticalCenter: parent.verticalCenter
+                    }
                     text: "Search..."
                     font.pixelSize: Config.Appearance.font.size.normal
                     color: Qt.rgba(1, 1, 1, 0.22)
@@ -66,9 +85,12 @@ Item {
                     focus: true
                     activeFocusOnPress: true
                     anchors {
-                        left: parent.left; leftMargin: Config.Appearance.spacing.small
-                        right: parent.right; rightMargin: Config.Appearance.spacing.smaller
-                        top: parent.top; bottom: parent.bottom
+                        left: parent.left
+                        leftMargin: Config.Appearance.spacing.small
+                        right: parent.right
+                        rightMargin: Config.Appearance.spacing.smaller
+                        top: parent.top
+                        bottom: parent.bottom
                     }
                     verticalAlignment: TextInput.AlignVCenter
                     color: Config.Theme.surfaceOn
@@ -77,13 +99,16 @@ Item {
                     clip: true
                     onTextChanged: root.searchText = text
 
-                    Keys.onUpPressed:    root.selectedIndex = Math.max(0, root.selectedIndex - 1)
-                    Keys.onDownPressed:  root.selectedIndex = Math.min(root.filteredApps.length - 1, root.selectedIndex + 1)
+                    Keys.onUpPressed: root.selectedIndex = Math.max(0, root.selectedIndex - 1)
+                    Keys.onDownPressed: root.selectedIndex = Math.min(root.filteredApps.length - 1, root.selectedIndex + 1)
                     Keys.onReturnPressed: {
-                            const app = root.filteredApps[root.selectedIndex]
-                               if (app){
-                                 app.execute()
-                               }
+                        const app = root.filteredApps[root.selectedIndex];
+                        if (app) {
+                            app.execute();
+
+                            searchInput.text = "";
+                            root.closeRequested();
+                        }
                     }
                 }
             }
@@ -103,15 +128,15 @@ Item {
                 boundsBehavior: Flickable.StopAtBounds
 
                 function scrollToSelected() {
-                       const itemHeight = 42 + Config.Appearance.spacing.small
-                       const itemY = root.selectedIndex * itemHeight
-                       const itemBottom = itemY + 42
+                    const itemHeight = 42 + Config.Appearance.spacing.small;
+                    const itemY = root.selectedIndex * itemHeight;
+                    const itemBottom = itemY + 42;
 
-                       if (itemY < contentY)
-                           contentY = itemY
-                       else if (itemBottom > contentY + height)
-                           contentY = itemBottom - height
-                   }
+                    if (itemY < contentY)
+                        contentY = itemY;
+                    else if (itemBottom > contentY + height)
+                        contentY = itemBottom - height;
+                }
 
                 Column {
                     id: appList
@@ -130,11 +155,11 @@ Item {
                             // auto scroll to keep selected item visible
                             onIndexChanged: {
                                 if (index === root.selectedIndex) {
-                                    let itemY = index * (height + Config.Appearance.spacing.small)
+                                    let itemY = index * (height + Config.Appearance.spacing.small);
                                     if (itemY < flick.contentY)
-                                        flick.contentY = itemY
+                                        flick.contentY = itemY;
                                     else if (itemY + height > flick.contentY + flick.height)
-                                        flick.contentY = itemY + height - flick.height
+                                        flick.contentY = itemY + height - flick.height;
                                 }
                             }
 
@@ -143,16 +168,14 @@ Item {
                                 anchors.leftMargin: Config.Appearance.spacing.small
                                 anchors.rightMargin: Config.Appearance.spacing.small
                                 radius: Config.Appearance.rounding.small
-                                color: root.selectedIndex === app.index
-                                    ? Qt.rgba(Config.Theme.primary.r, Config.Theme.primary.g, Config.Theme.primary.b, 0.15)
-                                    : hov.hovered
-                                        ? Qt.rgba(Config.Theme.primary.r, Config.Theme.primary.g, Config.Theme.primary.b, 0.07)
-                                        : "transparent"
-                                border.color: root.selectedIndex === app.index
-                                    ? Qt.rgba(Config.Theme.primary.r, Config.Theme.primary.g, Config.Theme.primary.b, 0.35)
-                                    : Qt.rgba(Config.Theme.primary.r, Config.Theme.primary.g, Config.Theme.primary.b, 0.10)
+                                color: root.selectedIndex === app.index ? Qt.rgba(Config.Theme.primary.r, Config.Theme.primary.g, Config.Theme.primary.b, 0.15) : hov.hovered ? Qt.rgba(Config.Theme.primary.r, Config.Theme.primary.g, Config.Theme.primary.b, 0.07) : "transparent"
+                                border.color: root.selectedIndex === app.index ? Qt.rgba(Config.Theme.primary.r, Config.Theme.primary.g, Config.Theme.primary.b, 0.35) : Qt.rgba(Config.Theme.primary.r, Config.Theme.primary.g, Config.Theme.primary.b, 0.10)
                                 border.width: 1
-                                Behavior on color { ColorAnimation { duration: 100 } }
+                                Behavior on color {
+                                    ColorAnimation {
+                                        duration: 100
+                                    }
+                                }
 
                                 Row {
                                     anchors.fill: parent
@@ -162,7 +185,8 @@ Item {
 
                                     Image {
                                         anchors.verticalCenter: parent.verticalCenter
-                                        width: 28; height: 28
+                                        width: 28
+                                        height: 28
                                         source: "image://icon/" + app.modelData.icon
                                         sourceSize: Qt.size(28, 28)
                                     }
@@ -171,23 +195,30 @@ Item {
                                         anchors.verticalCenter: parent.verticalCenter
                                         text: app.modelData.name
                                         font.pixelSize: Config.Appearance.font.size.normal
-                                        color: root.selectedIndex === app.index
-                                            ? Config.Theme.primary
-                                            : Config.Theme.surfaceOn
+                                        color: root.selectedIndex === app.index ? Config.Theme.primary : Config.Theme.surfaceOn
                                         width: parent.width - 44
                                         elide: Text.ElideRight
-                                        Behavior on color { ColorAnimation { duration: 100 } }
+                                        Behavior on color {
+                                            ColorAnimation {
+                                                duration: 100
+                                            }
+                                        }
                                     }
                                 }
 
                                 HoverHandler {
                                     id: hov
-                                    onHoveredChanged: if (hovered) root.selectedIndex = app.index
+                                    onHoveredChanged: if (hovered)
+                                        root.selectedIndex = app.index
                                 }
 
                                 MouseArea {
                                     anchors.fill: parent
-                                    onClicked: app.modelData.execute()
+                                    onClicked: {
+                                        searchInput.text = "";
+                                        app.modelData.execute();
+                                        root.closeRequested();
+                                    }
                                 }
                             }
                         }

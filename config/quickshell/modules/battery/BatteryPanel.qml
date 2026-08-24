@@ -16,14 +16,13 @@ Item {
     }
     property bool charging: UPower.displayDevice?.state === UPowerDeviceState.Charging
     property int percent: Math.round((UPower.displayDevice?.percentage ?? 0) * 100)
-    property int powerProfile: 1 // 1 = saver, 2 = balanced, 3 = performance
+    property int powerProfile: 1
 
-    opacity: parent.height > 150 ? 1 : 0
+   // opacity: parent.height > 150 ? 1 : 0
     Behavior on opacity {
         Widgets.Anim{}
     }
 
-    // power profile buttons
     RowLayout {
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
@@ -79,7 +78,7 @@ Item {
                 onClicked: root.powerProfile = 3
             }
         }
-    }    // battery fill bar
+    }
     Rectangle {
         anchors.bottom: parent.bottom
         height: 70
@@ -116,7 +115,6 @@ Item {
         }
     }
 
-    // remaining empty bar
     Rectangle {
         anchors.right: parent.right
         anchors.bottom: parent.bottom
