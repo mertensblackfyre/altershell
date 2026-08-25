@@ -35,6 +35,8 @@ Item {
         iconFallbackColor: iconColor
 
         onClicked: {
+           // barPopup._component = wifiComponent
+            //barPopup.openPanel(280, 400, "left")
             Services.ShellState._show("wifi", 450, 520);
         }
     }

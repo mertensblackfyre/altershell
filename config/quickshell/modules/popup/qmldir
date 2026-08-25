@@ -2,4 +2,5 @@ module modules.popup
 
 PopupLayer 1.0 PopupLayer.qml
 Popup 1.0 Popup.qml
+PopupWindow 1.0 PopupWindow.qml
 Launcher 1.0 Launcher.qml
