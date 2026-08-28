@@ -6,9 +6,11 @@ import QtQuick
 Singleton {
     id: root
     property bool visible: false
+
     property real panelWidth: 0
     property real panelHeight: 0
     property string active: ""
+    property string anchor: "bottom left"
 
     Timer {
         id: destroyTimer
@@ -20,11 +22,12 @@ Singleton {
         }
     }
 
-    function _show(name, w, h) {
+    function _show(name, w, h, anch) {
         destroyTimer.stop();
         active = name;
         panelWidth = w;
         panelHeight = h;
+        if (anch) anchor = anch;
         visible = true;
     }
 

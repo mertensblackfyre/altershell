@@ -42,18 +42,17 @@ Item {
     property color tertiary: "#efbc94"
     property color tertiaryContainer: "#623f20"
 
+    property bool isLightMode: false
+    property real wallLuminance: 0.5
 
-        property bool isLightMode: false
-        property real wallLuminance: 0.5 
+    property bool transparencyEnabled: true
+    property real rawTransparencyBase: 0.85
+    property real transparencyLayers: 0.95
 
-        property bool transparencyEnabled: true
-        property real rawTransparencyBase: 0.85
-        property real transparencyLayers: 0.95
-
-        readonly property real transparencyBase: Math.max(0, Math.min(1, root.rawTransparencyBase - (root.isLightMode ? 0.1 : 0)))
+    readonly property real transparencyBase: Math.max(0, Math.min(1, root.rawTransparencyBase - (root.isLightMode ? 0.1 : 0)))
     FileView {
         id: colorFile
-        path: "/home/mertens/.cache/matugen/colors.json"
+        path: "/home/mertens/.cache/wal/colors.json"
         blockLoading: true
         watchChanges: true
         onFileChanged: {
@@ -109,40 +108,33 @@ Item {
 
     Component.onCompleted: _apply()
     function getLuminance(c: color): real {
-            if (c.r === 0 && c.g === 0 && c.b === 0) return 0;
-            return Math.sqrt(0.299 * (c.r ** 2) + 0.587 * (c.g ** 2) + 0.114 * (c.b ** 2));
-        }
+        if (c.r === 0 && c.g === 0 && c.b === 0)
+            return 0;
+        return Math.sqrt(0.299 * (c.r ** 2) + 0.587 * (c.g ** 2) + 0.114 * (c.b ** 2));
+    }
 
-        function alterColour(c: color, a: real, layerIndex: int): color {
-            const luminance = root.getLuminance(c);
-            if (luminance === 0) return Qt.rgba(c.r, c.g, c.b, a);
+    function alterColour(c: color, a: real, layerIndex: int): color {
+        const luminance = root.getLuminance(c);
+        if (luminance === 0)
+            return Qt.rgba(c.r, c.g, c.b, a);
 
-            const offset = (!root.isLightMode || layerIndex === 1 ? 1 : -layerIndex / 2) *
-                           (root.isLightMode ? 0.2 : 0.3) *
-                           (1 - root.transparencyBase) *
-                           (1 + root.wallLuminance * (root.isLightMode ? (layerIndex === 1 ? 3 : 1) : 2.5));
+        const offset = (!root.isLightMode || layerIndex === 1 ? 1 : -layerIndex / 2) * (root.isLightMode ? 0.2 : 0.3) * (1 - root.transparencyBase) * (1 + root.wallLuminance * (root.isLightMode ? (layerIndex === 1 ? 3 : 1) : 2.5));
 
-            const scale = (luminance + offset) / luminance;
+        const scale = (luminance + offset) / luminance;
 
-            return Qt.rgba(
-                Math.max(0, Math.min(1, c.r * scale)),
-                Math.max(0, Math.min(1, c.g * scale)),
-                Math.max(0, Math.min(1, c.b * scale)),
-                a
-            );
-        }
+        return Qt.rgba(Math.max(0, Math.min(1, c.r * scale)), Math.max(0, Math.min(1, c.g * scale)), Math.max(0, Math.min(1, c.b * scale)), a);
+    }
 
-        function surfaceLayer(c: color, layerIndex: var): color {
-                if (!root.transparencyEnabled) return c;
+    function surfaceLayer(c: color, layerIndex: var): color {
+        if (!root.transparencyEnabled)
+            return c;
 
-                return layerIndex === 0
-                    ? Qt.rgba(c.r, c.g, c.b, root.transparencyBase)
-                    : root.alterColour(c, root.transparencyLayers, layerIndex ?? 1);
-            }
+        return layerIndex === 0 ? Qt.rgba(c.r, c.g, c.b, root.transparencyBase) : root.alterColour(c, root.transparencyLayers, layerIndex ?? 1);
+    }
 
-        function on(c: color): color {
-            if (c.hslLightness < 0.5)
-                return Qt.hsla(c.hslHue, c.hslSaturation, 0.9, 1);
-            return Qt.hsla(c.hslHue, c.hslSaturation, 0.1, 1);
-        }
+    function on(c: color): color {
+        if (c.hslLightness < 0.5)
+            return Qt.hsla(c.hslHue, c.hslSaturation, 0.9, 1);
+        return Qt.hsla(c.hslHue, c.hslSaturation, 0.1, 1);
+    }
 }

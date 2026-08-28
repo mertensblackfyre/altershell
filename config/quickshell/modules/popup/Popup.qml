@@ -97,6 +97,7 @@ PanelWindow {
                     return battComponent;
                 default:
                     return null;
+
                 }
             }
         }

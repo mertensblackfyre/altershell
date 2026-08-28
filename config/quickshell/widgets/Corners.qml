@@ -20,13 +20,14 @@ Item {
     }
 
     Rectangle {
+
         anchors.right: root.flip ? undefined : parent.right
         anchors.left: root.flip ? parent.left : undefined
         anchors.top: root.flipH ? undefined : parent.top
         anchors.bottom: root.flipH ? parent.bottom : undefined
 
-        color: Config.Theme.background
-        //color :"red"
+        //color: Config.Theme.background
+        color :"red"
 
         implicitWidth: parent.width / 2
         implicitHeight: parent.height / 2

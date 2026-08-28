@@ -47,23 +47,23 @@ PanelWindow {
         topLeftRadius: Config.Appearance.rounding.normal
 
         expand: true
-    
+
         Behavior on implicitHeight {
-                    Widgets.Anim {
-                        duration: Config.Appearance.anim.curves.expressiveFastSpatialDuration
-                        easing.type: Easing.BezierSpline
-                        easing.bezierCurve:Config.Appearance.anim.curves.expressiveFastSpatial
-                    }
-                }
+            Widgets.Anim {
+                duration: Config.Appearance.anim.curves.expressiveFastSpatialDuration
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: Config.Appearance.anim.curves.expressiveFastSpatial
+            }
+        }
 
-                Behavior on implicitWidth {
+        Behavior on implicitWidth {
 
-                    Widgets.Anim {
-                        duration: Config.Appearance.anim.curves.expressiveFastSpatialDuration
-                        easing.type: Easing.BezierSpline
-                        easing.bezierCurve:Config.Appearance.anim.curves.expressiveFastSpatial
-                    }
-                                    }
+            Widgets.Anim {
+                duration: Config.Appearance.anim.curves.expressiveFastSpatialDuration
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: Config.Appearance.anim.curves.expressiveFastSpatial
+            }
+        }
 
         HoverHandler {
             id: winHover
