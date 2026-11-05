@@ -7,34 +7,28 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-# Error handler
 trap 'echo -e "${RED}Error: Script failed at line $LINENO${NC}"; exit 1' ERR
 
 
-# Helper function for echo + cowsay
 print_section() {
     echo "$1" | cowsay
 }
 
-# Update system
 echo -e "${YELLOW}Updating system...${NC}"
 sudo pacman -Syu
 
-# Core utilities 
 echo -e "${YELLOW}Installing core utilities...${NC}"
 sudo pacman -S --noconfirm \
     dosfstools mtools os-prober base-devel autoconf git \
     wget pulseaudio unzip resolvconf pavucontrol \
     yazi gvfs gvfs-afc \
-    mtpfs libmtp gvfs-mtp zathura-pdf-mupdf zathura
+    mtpfs libmtp gvfs-mtp zathura-pdf-mupdf zathura cups cups-pdf system-config-printer avahi nss-mdns
 
-# Development environment
 print_section "Installing Dev environment"
 sudo pacman -S --noconfirm \
     tmux neovim fastfetch ly \
     go gcc cmake make pyright gopls
 
-# Setup Packer for Neovim
 echo -e "${YELLOW}Setting up Packer.nvim...${NC}"
 git clone --depth 1 https://github.com/wbthomason/packer.nvim \
     ~/.local/share/nvim/site/pack/packer/start/packer.nvim 2>/dev/null || \
@@ -54,14 +48,13 @@ else
     echo -e "${YELLOW}yay already installed${NC}"
 fi
 
-# Utilities
 print_section "Installing utilities"
 sudo pacman -S --noconfirm \
     ncdu nginx-mainline ufw openvpn btop fzf \
-    discord tree flatpak \
-    ghostty brave spotify-launcher syncthing \
+    discord tree  \
+    ghostty brave syncthing \
     hyprland hyprpaper hyprlock hyprsunset \
-    python-pip python-pipx
+    python-pip python-pipx markitdown-bin
 
 echo -e "${YELLOW}Installing AUR packages...${NC}"
 yay -S --noconfirm wireguard-arch wireguard-tools hyprshot tofi apple-fonts material-symbols-font
@@ -69,6 +62,12 @@ yay -S --noconfirm wireguard-arch wireguard-tools hyprshot tofi apple-fonts mate
 echo -e "${YELLOW}Installing Flatpak packages...${NC}"
 sudo pacman -S --noconfirm flatpak
 flatpak install -y flathub one.ablaze.floorp
+flatpak install -y flathub com.bilingify.readest  
+flatpak install -y flathub com.usebottles.bottles   
+flatpak install -y flathub in.cinny.Cinny    
+flatpak install -y flathub md.obsidian.Obsidian     
+flatpak install -y flathub net.ankiweb.Anki
+
 
 echo -e "${YELLOW}Enabling ly display manager...${NC}"
 sudo systemctl enable --now ly
